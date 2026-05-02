@@ -110,7 +110,7 @@ Install the project dependencies (`npm install` / `yarn install`) if the target 
 
 ### 3. Execute the Codemod Workflow
 
-Run these commands from the _root_ of the main repository. Replace `<TARGET_REPO_NAME>` with the folder name of your target repository.
+**IMPORTANT: Please make sure to run all `npx` codemod commands from the root directory of this main project (not from inside the `targets` folder).** Replace `<TARGET_REPO_NAME>` with the folder name of your target repository.
 
 **1. Validate the workflow**
 
