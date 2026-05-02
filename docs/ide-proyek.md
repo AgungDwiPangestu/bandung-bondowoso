@@ -4,6 +4,8 @@
 
 ## Ide 1: ethers.js v5 → v6 Full Migration Recipe
 
+**Detail:** ./ide-1-ethers-v5-ke-v6.md
+
 ### Deskripsi
 Membangun codemod komprehensif untuk migrasi `ethers.js` dari versi 5 ke versi 6 — salah satu library Web3/Ethereum paling populer dengan jutaan pengguna.
 
@@ -34,6 +36,8 @@ Estimasi ~2 minggu pengerjaan, dengan case study tambahan ($200) = potensi total
 ---
 
 ## Ide 2: wagmi v1 → v2 Full Migration Recipe
+
+**Detail:** ./ide-2-wagmi-v1-ke-v2.md
 
 ### Deskripsi
 Codemod untuk migrasi `wagmi` dari v1 ke v2 — library React hooks untuk Ethereum yang sangat populer di ekosistem frontend Web3.
@@ -66,6 +70,8 @@ Dengan tambahan case study ($200) dan potensi adopsi resmi dari wagmi team = tot
 ---
 
 ## Ide 3: web3.py v6 → v7 Python Migration Recipe
+
+**Detail:** ./ide-3-web3py-v6-ke-v7.md
 
 ### Deskripsi
 Codemod untuk ekosistem Python: migrasi `web3.py` dari v6 ke v7 — library utama untuk interaksi dengan Ethereum di Python, dipakai oleh backend engineer, data scientist, dan script automation di DeFi.

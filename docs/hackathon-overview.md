@@ -1,7 +1,16 @@
 # PortalDot Online S1 — Hackathon Overview
 
 **Platform:** DoraHacks  
-**Link:** https://dorahacks.io/hackathon/portaldot-online-s1/tracks
+**Link:** https://dorahacks.io/hackathon/boring-ai/detail
+
+## Link Terkait
+
+- Apa itu hackathon? https://guide.mlh.io/overview/why-organize-a-hackathon
+- Aturan kompetisi (contoh standar): https://github.com/MLH/mlh-policies/blob/main/standard-hackathon-rules.md
+- Cari hackathon lain (MLH): https://mlh.io/events
+- Cari hackathon lain (Devpost): https://devpost.com/
+- Direktori hackathon: https://www.hackathon.com/
+- Inspirasi proyek & referensi: https://github.com/topics/hackathon
 
 ---
 
@@ -14,6 +23,10 @@ Setiap upgrade library, refactor, atau migrasi bisa memakan waktu berhari-hari b
 - Menggunakan **AI + codemods** untuk mengotomatisasi pemeliharaan software
 - Mengubah migrasi yang kompleks menjadi workflow yang cepat dan andal
 - Membangun tools yang bisa dipakai tim di production
+
+Di akhir hackathon, targetnya bukan sekadar “jadi project”, tapi menghasilkan workflow migrasi yang production-grade: **codemod deterministik** menangani mayoritas perubahan dengan cepat dan reliabel, lalu **AI** menutup edge cases, dan semuanya terbukti jalan di repo dunia nyata.
+
+Kamu juga akan belajar **Codemod open-source toolkit** (dipakai oleh Node.js, React, Express, React Router, Nuxt.js, pnpm, Webpack, MSW, i18next, dan lainnya) dan menjadikannya “superpower” untuk kariermu.
 
 ---
 
@@ -131,3 +144,11 @@ Score = 100 × (1 − ((FP × wFP) + (FN × wFN)) ÷ (N × (wFP + wFN)))
 4. Bangun codemod workflow di repository sendiri
 5. Test di project open-source nyata
 6. Publish codemod ke registry (panduan tersedia)
+
+---
+
+## Kenapa Ini Penting
+
+Setiap perusahaan kesulitan dengan maintenance: dependency upgrade, API changes, dan refactor besar. Ini problem besar yang masih belum “beres”.
+
+Kalau kamu berhasil bikin migrasi yang benar-benar andal, kamu bukan cuma bikin proyek hackathon — kamu sedang membangun infrastruktur yang dibutuhkan banyak tim engineering. Codemod kamu bisa jadi jalur migrasi default yang dipakai ribuan developer.
