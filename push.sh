@@ -6,24 +6,24 @@
 COMMIT_MSG="${1:-auto update}"
 BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
 
-echo "🚀 Auto Git Push"
+echo "ðŸš€ Auto Git Push"
 echo "=========================================="
 echo " Branch  : $BRANCH"
 echo " Message : $COMMIT_MSG"
 echo "=========================================="
 
 if ! git rev-parse --git-dir > /dev/null 2>&1; then
-    echo "❌ Not a git repository!"
+    echo "âŒ Not a git repository!"
     exit 1
 fi
 
-echo "🔍 Repository status:"
+echo "ðŸ” Repository status:"
 git status --short
 echo ""
 
 COUNT=0
 
-# ── Detect commit type from filename / path ──────────────────────────────────
+# â”€â”€ Detect commit type from filename / path â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 get_type() {
     local file="$1"
     local status="$2"
@@ -50,7 +50,7 @@ get_type() {
     esac
 }
 
-# ── Process all changed files (no subshell — uses process substitution) ──────
+# â”€â”€ Process all changed files (no subshell â€” uses process substitution) â”€â”€â”€â”€â”€â”€
 while IFS= read -r line; do
     [[ -z "$line" ]] && continue
 
@@ -64,28 +64,28 @@ while IFS= read -r line; do
 
     case "$STATUS_CLEAN" in
         D)
-            echo " delete  → $FILE"
+            echo " delete  â†’ $FILE"
             git rm --cached "$FILE" 2>/dev/null || git rm "$FILE" 2>/dev/null
             git commit -m "$TYPE($FILE): $COMMIT_MSG"
             ;;
         M)
-            echo " modify  → $FILE"
+            echo " modify  â†’ $FILE"
             git add "$FILE"
             git commit -m "$TYPE($FILE): $COMMIT_MSG"
             ;;
         A|"??")
-            echo " add     → $FILE"
+            echo " add     â†’ $FILE"
             git add "$FILE"
             git commit -m "$TYPE($FILE): $COMMIT_MSG"
             ;;
         R*)
             # Renamed: "old -> new"
-            echo " rename  → $FILE"
+            echo " rename  â†’ $FILE"
             git add "$FILE"
             git commit -m "refactor($FILE): rename - $COMMIT_MSG"
             ;;
         *)
-            echo " $STATUS_CLEAN → $FILE"
+            echo " $STATUS_CLEAN â†’ $FILE"
             git add "$FILE"
             git commit -m "chore($FILE): $COMMIT_MSG"
             ;;
@@ -95,7 +95,7 @@ while IFS= read -r line; do
 
 done < <(git status --short)
 
-# ── Push ─────────────────────────────────────────────────────────────────────
+# â”€â”€ Push â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 echo ""
 
 # Check if there are local commits to push
@@ -103,16 +103,16 @@ LOCAL_AHEAD=$(git rev-list --count origin/"$BRANCH".."$BRANCH" 2>/dev/null || ec
 
 if [ "$COUNT" -gt 0 ] || [ "$LOCAL_AHEAD" -gt 0 ]; then
     if [ "$LOCAL_AHEAD" -gt 0 ]; then
-        echo "📤 Local branch is ahead by $LOCAL_AHEAD commit(s)."
+        echo "ðŸ“¤ Local branch is ahead by $LOCAL_AHEAD commit(s)."
     fi
-    echo "📤 Pushing to origin/$BRANCH..."
+    echo "ðŸ“¤ Pushing to origin/$BRANCH..."
     if git push origin "$BRANCH"; then
         echo "=========================================="
-        echo "✅ Done! $COUNT commit(s) pushed."
+        echo "âœ… Done! $COUNT commit(s) pushed."
         echo "=========================================="
     else
         echo "=========================================="
-        echo "❌ Push failed!"
+        echo "âŒ Push failed!"
         echo "=========================================="
         exit 1
     fi
