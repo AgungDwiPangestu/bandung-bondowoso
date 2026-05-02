@@ -1,0 +1,11 @@
+version: "1"
+
+nodes:
+  - id: apply-deterministic-ethers-v6-rewrites
+    name: Apply safe ethers.js v5 to v6 rewrites
+    type: automatic
+    steps:
+      - name: Rewrite safe ethers utility and provider patterns
+        js-ast-grep:
+          js_file: scripts/codemod.ts
+          language: "typescript"
