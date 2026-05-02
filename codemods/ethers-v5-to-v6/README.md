@@ -1,34 +1,77 @@
 # ethers.js v5 -> v6 Codemod Workflow
 
-Workflow ini adalah paket awal untuk hackathon yang fokus ke migrasi `ethers.js` v5 -> v6 dengan prinsip:
+Workflow ini adalah fondasi migrasi `ethers.js` v5 -> v6 yang diarahkan ke standar hackathon:
 
-- hanya mengubah pola yang aman dan deterministik
-- menghindari false positives
-- siap dipakai sebagai fondasi workflow production-grade
+- transform **deterministik** dulu
+- hindari **false positives**
+- scan hanya **source files**
+- sediakan **audit/report** untuk edge cases yang belum aman di-auto-fix
 
-## Scope v1
+## Cocok Untuk Siapa
 
-Workflow ini saat ini hanya mengotomatisasi pola yang aman:
+Workflow ini cocok untuk:
 
-- `ethers.utils.parseEther(...)` -> `ethers.parseEther(...)`
-- `ethers.utils.parseUnits(...)` -> `ethers.parseUnits(...)`
-- `ethers.utils.formatEther(...)` -> `ethers.formatEther(...)`
-- `ethers.utils.formatUnits(...)` -> `ethers.formatUnits(...)`
-- `ethers.utils.id(...)` -> `ethers.id(...)`
-- `ethers.utils.getAddress(...)` -> `ethers.getAddress(...)`
-- `ethers.utils.isAddress(...)` -> `ethers.isAddress(...)`
-- `ethers.utils.keccak256(...)` -> `ethers.keccak256(...)`
-- `new ethers.providers.JsonRpcProvider(...)` -> `new ethers.JsonRpcProvider(...)`
+- maintainer open-source yang ingin bantu user upgrade ke `ethers` v6
+- peserta hackathon yang butuh bukti migrasi nyata di repo publik
+- developer yang mau automasi migrasi aman sebelum masuk ke fix manual/AI
+
+## Prasyarat
+
+Sebelum menjalankan workflow, siapkan:
+
+- `Node.js` dan `npx`
+- `git`
+- terminal shell biasa
+- `PowerShell` untuk audit report
+
+Jalankan semua command dari **root repo ini**, kecuali kalau disebut lain.
+
+## Scope Aman Saat Ini
+
+Workflow inti saat ini hanya me-rewrite pola whitelist yang aman:
+
+- `ethers.utils.parseEther` -> `ethers.parseEther`
+- `ethers.utils.parseUnits` -> `ethers.parseUnits`
+- `ethers.utils.formatEther` -> `ethers.formatEther`
+- `ethers.utils.formatUnits` -> `ethers.formatUnits`
+- `ethers.utils.id` -> `ethers.id`
+- `ethers.utils.getAddress` -> `ethers.getAddress`
+- `ethers.utils.isAddress` -> `ethers.isAddress`
+- `ethers.utils.keccak256` -> `ethers.keccak256`
+- `ethers.providers.JsonRpcProvider` -> `ethers.JsonRpcProvider`
+- `ethers.providers.JsonRpcBatchProvider` -> `ethers.JsonRpcBatchProvider`
+- `ethers.providers.WebSocketProvider` -> `ethers.WebSocketProvider`
+- `ethers.providers.StaticJsonRpcProvider` -> `ethers.StaticJsonRpcProvider`
+- `ethers.providers.FallbackProvider` -> `ethers.FallbackProvider`
+- `ethers.providers.AlchemyProvider` -> `ethers.AlchemyProvider`
+- `ethers.providers.InfuraProvider` -> `ethers.InfuraProvider`
+- `ethers.providers.EtherscanProvider` -> `ethers.EtherscanProvider`
 
 ## Belum Diotomatisasi
 
-Bagian berikut sengaja belum diubah otomatis karena berisiko mengubah behavior:
+Pola berikut **tidak** diubah otomatis dan harus masuk audit:
 
+- `ethers.providers.Web3Provider` -> `ethers.BrowserProvider`
 - `BigNumber` -> `BigInt`
-- `Web3Provider` -> `BrowserProvider`
-- flow async seperti `waitForDeployment()`
-- perubahan ESM/CJS dan config build
-- alias import `ethers` yang tidak memakai bentuk standar
+- deploy flow yang mungkin butuh `waitForDeployment()`
+- ESM/CJS dan perubahan tooling/build
+- pola `ethers.utils.*` yang belum ada di whitelist
+
+## File yang Diproses
+
+Workflow hanya memproses:
+
+- `**/*.js`
+- `**/*.jsx`
+- `**/*.ts`
+- `**/*.tsx`
+
+Workflow mengecualikan:
+
+- `**/node_modules/**`
+- `**/artifacts/**`
+- `**/cache/**`
+- `**/.git/**`
 
 ## Struktur
 
@@ -38,55 +81,97 @@ codemods/ethers-v5-to-v6/
 ├── codemod.yaml
 ├── workflow.yaml
 ├── scripts/
-│   └── codemod.ts
+│   ├── codemod.ts
+│   └── audit-edge-cases.ps1
 └── tests/
     └── fixtures/
         ├── input.ts
-        └── expected.ts
+        ├── expected.ts
+        ├── input.js
+        └── expected.js
 ```
 
-## Cara Menjalankan
+## Run Workflow
+
+## Quickstart Publik
+
+Kalau kamu baru pertama pakai, alur paling aman:
+
+1. clone repo target v5 ke folder terpisah
+2. validate workflow
+3. dry-run
+4. apply
+5. cek `git diff`
+6. jalankan audit edge cases
+7. lanjut ke compile/build/test repo target
 
 ### 1. Validasi workflow
 
 ```bash
-npx codemod workflow validate -w ./codemods/ethers-v5-to-v6/workflow.yaml
+npx codemod workflow validate -w "./codemods/ethers-v5-to-v6/workflow.yaml"
 ```
 
-### 2. Dry-run ke repo target
+### 2. Dry-run
 
 ```bash
-npx codemod workflow run -w ./codemods/ethers-v5-to-v6/workflow.yaml -t ../target-repo --dry-run
+npx codemod workflow run -w "./codemods/ethers-v5-to-v6/workflow.yaml" -t "./targets/alchemy-goerli-sample-demo" --dry-run
 ```
 
-### 3. Terapkan ke repo target
+### 3. Apply
 
 ```bash
-npx codemod workflow run -w ./codemods/ethers-v5-to-v6/workflow.yaml -t ../target-repo
+npx codemod workflow run -w "./codemods/ethers-v5-to-v6/workflow.yaml" -t "./targets/alchemy-goerli-sample-demo"
 ```
 
-### 4. Tes cepat transform lokal
+### 4. Cek perubahan
+
+```bash
+git -C ./targets/alchemy-goerli-sample-demo status --short
+git -C ./targets/alchemy-goerli-sample-demo diff
+```
+
+## Run Audit untuk Edge Cases
+
+Setelah codemod apply, jalankan audit untuk pola yang belum aman diubah otomatis:
+
+```bash
+powershell -ExecutionPolicy Bypass -File "./codemods/ethers-v5-to-v6/scripts/audit-edge-cases.ps1" -TargetPath "./targets/alchemy-goerli-sample-demo"
+```
+
+Output report akan dibuat di repo target:
+
+- `codemod-reports/ethers-v5-to-v6-edge-cases.md`
+- `codemod-reports/ethers-v5-to-v6-edge-cases.json`
+
+## Test Local Fixtures
+
+### JavaScript fixture
+
+```bash
+npx codemod jssg run ./codemods/ethers-v5-to-v6/scripts/codemod.ts ./codemods/ethers-v5-to-v6/tests/fixtures/input.js --language javascript
+```
+
+### TypeScript fixture
 
 ```bash
 npx codemod jssg run ./codemods/ethers-v5-to-v6/scripts/codemod.ts ./codemods/ethers-v5-to-v6/tests/fixtures/input.ts --language typescript
 ```
 
-## Cara Pakai dengan Repo Referensi di Repo Ini
+## Minimum Production-Grade Checklist
 
-Gunakan daftar repo v5 sebagai target uji utama:
+- Workflow valid
+- Source-only scan
+- Transform deterministik dengan whitelist
+- Repo target fresh clone
+- Dry-run sukses
+- Apply sukses
+- `git diff` menunjukkan perubahan yang relevan
+- Audit edge cases menghasilkan report
+- Repo target diverifikasi dengan compile/build/test jika tersedia
+- Uji di lebih dari satu repo nyata
 
-- [ethersjs-v5-projects.md](file:///e:/smweb/bandung-bondowoso/etherjs-v5/ethersjs-v5-projects.md)
+## Referensi Tambahan
 
-Gunakan daftar repo v6 sebagai referensi pola hasil akhir:
-
-- [repo-ethers-v6.md](file:///e:/smweb/bandung-bondowoso/repo%20ethers%20v6/repo-ethers-v6.md)
-
-## Target Hackathon
-
-Supaya memenuhi kriteria hackathon, workflow ini harus dikembangkan lanjut ke tahap berikut:
-
-1. tambah coverage transform yang tetap aman
-2. buat report untuk edge cases
-3. uji di minimal 1-3 repo nyata
-4. pastikan build/tests lulus
-5. jalankan codemod dua kali dan pastikan run kedua no-op atau hampir no-op
+- Demo presentasi: [demo-workflow-ethers-v5-ke-v6.md](file:///e:/smweb/bandung-bondowoso/docs/demo-workflow-ethers-v5-ke-v6.md)
+- Daftar repo v5: [ethersjs-v5-projects.md](file:///e:/smweb/bandung-bondowoso/docs/etherjs-v5/ethersjs-v5-projects.md)
+- Referensi pola v6: [repo-ethers-v6.md](file:///e:/smweb/bandung-bondowoso/docs/repo%20ethers%20v6/repo-ethers-v6.md)
