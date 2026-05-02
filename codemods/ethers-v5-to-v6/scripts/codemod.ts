@@ -12,6 +12,17 @@ const SAFE_UTIL_REWRITES: Record<string, string> = {
   keccak256: "keccak256",
 };
 
+const SAFE_PROVIDER_REWRITES: Record<string, string> = {
+  JsonRpcProvider: "JsonRpcProvider",
+  JsonRpcBatchProvider: "JsonRpcBatchProvider",
+  WebSocketProvider: "WebSocketProvider",
+  StaticJsonRpcProvider: "StaticJsonRpcProvider",
+  FallbackProvider: "FallbackProvider",
+  AlchemyProvider: "AlchemyProvider",
+  InfuraProvider: "InfuraProvider",
+  EtherscanProvider: "EtherscanProvider",
+};
+
 function replaceAllMatches(
   rootNode: ReturnType<Parameters<Codemod<TypeScript>>[0]["root"]>,
   pattern: string,
@@ -35,21 +46,23 @@ const codemod: Codemod<TypeScript> = async (root) => {
     edits.push(
       ...replaceAllMatches(
         rootNode,
-        `ethers.utils.${fromName}($$$ARGS)`,
+        `ethers.utils.${fromName}`,
         `ethers.utils.${fromName}`,
         `ethers.${toName}`,
       ),
     );
   }
 
-  edits.push(
-    ...replaceAllMatches(
-      rootNode,
-      "new ethers.providers.JsonRpcProvider($$$ARGS)",
-      "ethers.providers.JsonRpcProvider",
-      "ethers.JsonRpcProvider",
-    ),
-  );
+  for (const [fromName, toName] of Object.entries(SAFE_PROVIDER_REWRITES)) {
+    edits.push(
+      ...replaceAllMatches(
+        rootNode,
+        `ethers.providers.${fromName}`,
+        `ethers.providers.${fromName}`,
+        `ethers.${toName}`,
+      ),
+    );
+  }
 
   if (edits.length === 0) {
     return null;
