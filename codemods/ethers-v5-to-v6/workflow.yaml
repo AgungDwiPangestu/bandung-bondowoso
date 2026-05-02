@@ -1,0 +1,31 @@
+version: "1"
+
+nodes:
+  - id: apply-deterministic-ethers-v6-rewrites
+    name: Apply safe ethers.js v5 to v6 rewrites
+    type: automatic
+    steps:
+      - name: Rewrite safe ethers patterns in JavaScript files
+        js-ast-grep:
+          js_file: scripts/codemod.ts
+          language: "javascript"
+          include:
+            - "**/*.js"
+            - "**/*.jsx"
+          exclude:
+            - "**/node_modules/**"
+            - "**/artifacts/**"
+            - "**/cache/**"
+            - "**/.git/**"
+      - name: Rewrite safe ethers patterns in TypeScript files
+        js-ast-grep:
+          js_file: scripts/codemod.ts
+          language: "typescript"
+          include:
+            - "**/*.ts"
+            - "**/*.tsx"
+          exclude:
+            - "**/node_modules/**"
+            - "**/artifacts/**"
+            - "**/cache/**"
+            - "**/.git/**"

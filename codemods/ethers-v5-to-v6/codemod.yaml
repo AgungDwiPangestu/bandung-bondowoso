@@ -1,0 +1,7 @@
+schema_version: "1.0"
+name: "local/ethers-v5-to-v6"
+version: "0.1.0"
+description: "Deterministic ethers.js v5 to v6 migration workflow for safe utility and provider rewrites."
+author: "Local project"
+license: "MIT"
+private: true
